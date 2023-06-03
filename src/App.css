@@ -15,9 +15,8 @@ h1 {
 }
 
 .tabla {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  border: 1px solid black; /* Agregamos un borde negro */
+  margin-bottom: 20px; /* Aumentamos el espacio entre las tablas */
 }
 
 .bingo-board {

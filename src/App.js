@@ -1,53 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import TablaBingo from './TablaBingo';
 
 function App() {
-
-    // Estado para almacenar las tablas de bingo
-    const [bingoTables, setBingoTables] = useState([createNewTable()]);
-
-    // Función para crear una nueva tabla de bingo
-    function createNewTable() {
-      return Array(25).fill('');
-    }
-  
-    // Función para agregar una nueva tabla de bingo
-    function addNewTable() {
-      setBingoTables([...bingoTables, createNewTable()]);
-    }
-  
-  // Estado para almacenar los números del tablero de bingo
-  const [bingoNumbers, setBingoNumbers] = useState(() => {
-    // Obtener los números del tablero de bingo del almacenamiento local
-    const savedBingoNumbers = localStorage.getItem('bingoNumbers');
-    // Si hay números guardados, se cargan; de lo contrario, se crea un nuevo tablero vacío
-    return savedBingoNumbers ? JSON.parse(savedBingoNumbers) : Array(25).fill('');
-  });
+  // Estado para almacenar las tablas de bingo
+  const [bingoTables, setBingoTables] = useState([]);
 
   // Estado para almacenar los números ingresados por el usuario
-  const [enteredNumbers, setEnteredNumbers] = useState(() => {
-    // Obtener los números ingresados del almacenamiento local
-    const savedEnteredNumbers = localStorage.getItem('enteredNumbers');
-    // Si hay números guardados, se cargan; de lo contrario, se crea un arreglo vacío
-    return savedEnteredNumbers ? JSON.parse(savedEnteredNumbers) : [];
-  });
+  const [enteredNumbers, setEnteredNumbers] = useState([]);
 
-  // Guardar los números del tablero de bingo en el almacenamiento local al actualizar el estado
-  useEffect(() => {
-    localStorage.setItem('bingoNumbers', JSON.stringify(bingoNumbers));
-  }, [bingoNumbers]);
+  // Crear una nueva tabla de bingo
+  const createNewTable = () => {
+    return Array(25).fill('');
+  };
 
-  // Guardar los números ingresados en el almacenamiento local al actualizar el estado
-  useEffect(() => {
-    localStorage.setItem('enteredNumbers', JSON.stringify(enteredNumbers));
-  }, [enteredNumbers]);
+  // Agregar una nueva tabla de bingo
+  const addNewTable = () => {
+    setBingoTables([...bingoTables, createNewTable()]);
+  };
 
   // Manejar el cambio de valor en una celda del tablero
-  const handleInputChange = (e, index) => {
-    const updatedNumbers = [...bingoNumbers];
-    updatedNumbers[index] = e.target.value;
-    setBingoNumbers(updatedNumbers);
+  const handleInputChange = (e, tableIndex, cellIndex) => {
+    const updatedTables = [...bingoTables];
+    updatedTables[tableIndex][cellIndex] = e.target.value;
+    setBingoTables(updatedTables);
   };
 
   // Manejar el envío de un número ingresado por el usuario
@@ -60,7 +35,7 @@ function App() {
     }
   };
 
-  // Reiniciar los números ingresados, estableciendo el estado en un arreglo vacío
+  // Reiniciar los números ingresados
   const handleReset = () => {
     setEnteredNumbers([]);
   };
@@ -73,20 +48,40 @@ function App() {
     return 'bingo-cell';
   };
 
+  useEffect(() => {
+    const savedTables = localStorage.getItem('bingoTables');
+    if (savedTables) {
+      setBingoTables(JSON.parse(savedTables));
+    } else {
+      // Si no hay tablas guardadas, se crea una nueva tabla inicial
+      addNewTable();
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('bingoTables', JSON.stringify(bingoTables));
+  }, [bingoTables]);
+
   return (
     <div className="app">
       <div className="bingo-container">
-        {bingoTables.map((bingoNumbers, index) => (
-          <div className="tabla" key={index}>
-            <TablaBingo
-              bingoNumbers={bingoNumbers}
-              handleInputChange={(e, i) => handleInputChange(e, i, index)}
-              getCellClass={(number, i) => getCellClass(number, i, index)}
-            />
+        {bingoTables.map((table, tableIndex) => (
+          <div className="tabla" key={tableIndex}>
+            <div className="bingo-board">
+              {/* Renderizar las celdas del tablero */}
+              {table.map((number, cellIndex) => (
+                <input
+                  key={cellIndex}
+                  type="text"
+                  value={number}
+                  onChange={(e) => handleInputChange(e, tableIndex, cellIndex)}
+                  className={getCellClass(number, cellIndex)}
+                />
+              ))}
+            </div>
           </div>
         ))}
-        <button onClick={addNewTable}>Agregar Tabla</button>
-        {/* Botón para agregar una nueva tabla */}
+        <button onClick={addNewTable}>Añadir Tabla</button>
         <form onSubmit={handleNumberSubmit}>
           {/* Formulario para agregar números */}
           <input

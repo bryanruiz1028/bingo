@@ -1,6 +1,6 @@
 import React from 'react';
 
-function TablaBingo({ bingoNumbers, handleInputChange, getCellClass }) {
+const TablaBingo = ({ bingoNumbers, handleInputChange, getCellClass }) => {
   return (
     <div className="bingo-board">
       {/* Renderizar las celdas del tablero */}
@@ -15,6 +15,6 @@ function TablaBingo({ bingoNumbers, handleInputChange, getCellClass }) {
       ))}
     </div>
   );
-}
+};
 
 export default TablaBingo;
