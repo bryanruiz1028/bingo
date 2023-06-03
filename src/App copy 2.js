@@ -1,22 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import TablaBingo from './TablaBingo';
 
 function App() {
-
-    // Estado para almacenar las tablas de bingo
-    const [bingoTables, setBingoTables] = useState([createNewTable()]);
-
-    // Función para crear una nueva tabla de bingo
-    function createNewTable() {
-      return Array(25).fill('');
-    }
-  
-    // Función para agregar una nueva tabla de bingo
-    function addNewTable() {
-      setBingoTables([...bingoTables, createNewTable()]);
-    }
-  
   // Estado para almacenar los números del tablero de bingo
   const [bingoNumbers, setBingoNumbers] = useState(() => {
     // Obtener los números del tablero de bingo del almacenamiento local
@@ -76,17 +61,20 @@ function App() {
   return (
     <div className="app">
       <div className="bingo-container">
-        {bingoTables.map((bingoNumbers, index) => (
-          <div className="tabla" key={index}>
-            <TablaBingo
-              bingoNumbers={bingoNumbers}
-              handleInputChange={(e, i) => handleInputChange(e, i, index)}
-              getCellClass={(number, i) => getCellClass(number, i, index)}
+        <div className='tabla'>
+        <div className="bingo-board">
+          {/* Renderizar las celdas del tablero */}
+          {bingoNumbers.map((number, index) => (
+            <input
+              key={index}
+              type="text"
+              value={number}
+              onChange={(e) => handleInputChange(e, index)}
+              className={getCellClass(number, index)}
             />
-          </div>
-        ))}
-        <button onClick={addNewTable}>Agregar Tabla</button>
-        {/* Botón para agregar una nueva tabla */}
+          ))}
+        </div>
+        </div>
         <form onSubmit={handleNumberSubmit}>
           {/* Formulario para agregar números */}
           <input
